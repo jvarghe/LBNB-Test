@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/jvarghe/LBNB-Test/issues"
   },
-  "homepage": "https://github.com/jvarghe/LBNB-Test#readme"
+  "homepage": "https://github.com/jvarghe/LBNB-Test#readme",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
 }
