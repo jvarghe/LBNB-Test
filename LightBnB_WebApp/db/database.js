@@ -29,7 +29,6 @@ const getUserWithEmail = function(email) {
   const query = `SELECT * FROM users WHERE email = $1;`;
   return pool.query(query, [email])
     .then((result) => {
-      console.log(result.rows[0]);
       return result.rows[0];
     })
     .catch((err) => err.message);
@@ -170,10 +169,31 @@ const getAllProperties = function(options, limit = 10) {
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  //destructure keys and values into arrays
+  const columns = Object.keys(property);
+  const values = Object.values(property);
+  const placeholders = [];
+
+  //placeholders for parameterized queries
+  for (let i = 0; i < values.length; i++) {
+    placeholders.push(`$${i + 1}`);
+  }
+
+  //queryString
+  const queryString = `
+    INSERT INTO properties (${columns.join(", ")})
+    VALUES (${placeholders.join(", ")})
+    RETURNING *;
+  `;
+
+  return pool
+    .query(queryString, values)
+    .then((result) => {
+      return result.rows;
+    })
+    .catch((err) => {
+      return err.message;
+    });
 };
 
 
